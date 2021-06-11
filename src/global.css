@@ -1,0 +1,33 @@
+@font-face {
+  font-family: 'Neue Helvetica';
+  font-style: normal;
+  font-weight: normal;
+  src: local('Neue Helvetica Roman'), url('./fonts/Helvetica\ Neue\ LT\ 55\ Roman.woff') format('woff');
+}
+
+@font-face {
+  font-family: 'Neue Helvetica';
+  font-style: normal;
+  font-weight: bold;
+  src: local('Neue Helvetica Bold'), url('./fonts/Helvetica\ Neue\ LT\ 75\ Bold.woff') format('woff');
+}
+
+* {
+  font-size: 10px;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --primary: #2a2a35;
+  --secondary: #ecaa5b;
+  --text-primary: #a2abbd;
+  --white: #ffffff;
+  --dark: #707070;
+  --darker: #25252f;
+}
+
+body {
+  font-family: 'Neue Helvetica';
+}
