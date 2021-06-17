@@ -23,7 +23,7 @@ const App = () => {
   const [radio, setRadio] = useState(initialState);
 
   const { stations, isLoading, error } = radio;
-  const selectedStation = radio.stations.find(
+  const selectedStation = stations.find(
     (station) => station.isPlaying,
   );
 
@@ -31,21 +31,20 @@ const App = () => {
     (async () => {
       try {
         setRadio({ ...initialState, isLoading: true });
-        const data = await getStations();
+        const stations = await getStations();
         setRadio({
           ...initialState,
-          stations: data,
-          isLoading: false,
+          stations,
         });
       } catch (error) {
-        setRadio({ ...initialState, error, isLoading: false });
+        setRadio({ ...initialState, error });
       }
     })();
     return () => setRadio(initialState);
   }, []);
 
   const playStation = (id: string) => {
-    const updatedStations = radio.stations.map((station) => {
+    const updatedStations = stations.map((station) => {
       if (station.id === id)
         return { ...station, isPlaying: !station.isPlaying };
       else return { ...station, isPlaying: false };
