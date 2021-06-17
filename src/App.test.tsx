@@ -1,9 +1,9 @@
-/*
- Disabling the console.error for this test file as it's pointint to an error with wrapping components with act() while most of the tests are and they are all passing and working as expected
-*/
-/* eslint-disable no-console */
 import React from 'react';
-import { fireEvent, render, screen } from '@testing-library/react';
+import {
+  fireEvent,
+  render,
+  waitForElementToBeRemoved,
+} from '@testing-library/react';
 import { act } from 'react-dom/test-utils';
 import App from './App';
 
@@ -14,17 +14,11 @@ import { numberWithCommas } from './utils';
 
 jest.mock('./api/index', () => ({ getStations: jest.fn() }));
 
-// https://github.com/facebook/jest/pull/5267#issuecomment-356605468
-beforeEach(() => {
-  jest.spyOn(console, 'error');
-  (console.error as jest.Mock).mockImplementation(() => {});
-});
+test('renders radio header', async () => {
+  (getStations as jest.Mock<Promise<Station[]>>).mockResolvedValue(
+    stations,
+  );
 
-afterEach(() => {
-  (console.error as jest.Mock).mockRestore();
-});
-
-test('renders radio header', () => {
   const { getByText, getByTitle } = render(<App />);
 
   const stationsText = getByText(/stations/i);
@@ -34,6 +28,8 @@ test('renders radio header', () => {
   expect(stationsText).toBeInTheDocument();
   expect(arrowLeftIcon).toBeInTheDocument();
   expect(quitIcon).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => getByText(/loading/i));
 });
 
 test('renders loading element when at first', async () => {
@@ -45,6 +41,8 @@ test('renders loading element when at first', async () => {
 
   expect(getByText(/loading.../i)).toBeInTheDocument();
   expect(getByTestId('loader')).toBeInTheDocument();
+
+  await waitForElementToBeRemoved(() => getByText(/loading/i));
 });
 
 test('renders radio stations', async () => {
@@ -64,7 +62,7 @@ test('renders radio stations', async () => {
   });
 });
 
-test('renders radio station plyer when clicked', async () => {
+test('renders radio station player when clicked', async () => {
   (getStations as jest.Mock<Promise<Station[]>>).mockResolvedValue(
     stations,
   );
@@ -125,10 +123,10 @@ test('renders the error message if an error occurs while loading stations', asyn
   const stationFrequency = numberWithCommas(stations[0].frequency);
 
   await act(async () => {
-    const { findByText } = render(<App />);
+    const { findByText, queryByText } = render(<App />);
 
-    expect(screen.queryByText(stationName)).toBeNull();
-    expect(screen.queryByText(stationFrequency)).toBeNull();
+    expect(queryByText(stationName)).toBeNull();
+    expect(queryByText(stationFrequency)).toBeNull();
     expect(await findByText(message)).toBeInTheDocument();
   });
 });
